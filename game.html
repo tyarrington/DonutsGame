@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<head>
+<title>Final Project: Eat The Doughnuts!</title>
+<script src="three.min.js"></script>
+<script src="KeyboardState.js"></script>
+
+<script>
+    var scene, camera, renderer; // Three.js rendering basics.
+
+    var canvas; // The canvas on which the image is rendered.
+
+    var animal;
+    var animalBody;
+    var animalLegFront1;
+    var animalLegFront2;
+    var animalLegBack1;
+    var animalLegBack2;
+    var monkey;
+
+    var doughnuts;
+    var doughnut;
+    var doughnut1;
+    var doughnut2;
+    var doughnut3;
+    var doughnut4;
+    var doughnut5;
+    var doughnut6;
+    var doughnut7;
+    var doughnut8;
+    var doughnut9;
+    var doughnut10;
+
+    var doughnutCount;
+
+    var keyboard = new KeyboardState();
+
+    // Create the scene. This function is called once, as soon as the page loads.
+    // The renderer has already been created before this function is called.
+    function createWorld() {
+
+        renderer.setClearColor(0); // Set background color (0, or 0x000000, is black).
+        scene = new THREE.Scene(); // Create a new scene which we can add objects to.
+
+        // create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
+        camera = new THREE.PerspectiveCamera(70, canvas.width/canvas.height, 1, 1000);
+        camera.position.z = 65;
+        camera.position.y = 5;
+        camera.position.x = 45;
+        camera.rotation.y = -0.4;
+
+        var light = new THREE.DirectionalLight( 0xffffff );
+        light.position.set( 1, 1, 1 );
+        scene.add(light);
+
+        var light2 = new THREE.DirectionalLight( 0xffffff );
+        light2.position.set( -1, -1, -1 );
+        scene.add(light2);
+
+        var geometry = new THREE.BoxGeometry(100, 100, 100);
+        var grassTexture = THREE.ImageUtils.loadTexture("grass.jpg");
+        grassTexture.wrapS = THREE.RepeatWrapping;
+        grassTexture.wrapT = THREE.RepeatWrapping;
+        grassTexture.repeat.set( 5, 5 ); // twice in u and three times in v
+        var grassMaterial = new THREE.MeshPhongMaterial( { map: grassTexture, side: THREE.DoubleSide } );
+
+        var mountainTexture = THREE.ImageUtils.loadTexture("mountain.jpg");
+        var mountainMaterial = new THREE.MeshPhongMaterial( { map: mountainTexture, side: THREE.DoubleSide } );
+
+        var sunriseTexture = THREE.ImageUtils.loadTexture("mountain-sunrise.jpg");
+        var sunriseMaterial = new THREE.MeshPhongMaterial( { map: sunriseTexture, side: THREE.DoubleSide } );
+
+        var floorGeom = new THREE.Geometry();
+
+        floorGeom.vertices =[
+            new THREE.Vector3(200, 0, 200),
+            new THREE.Vector3(200, 0, 0),
+            new THREE.Vector3(0, 0, 0),
+            new THREE.Vector3(0, 0, 200)
+        ];
+
+        floorGeom.faces = [
+            new THREE.Face3(3, 2, 1),
+            new THREE.Face3(3, 1, 0)
+        ];
+
+        floorGeom.computeFaceNormals();
+
+        floorGeom.faceVertexUvs[0] = [];
+
+        // set up a few uv coordinates
+        var uvcoords = [new THREE.Vector2(0, 0),   // 0
+                        new THREE.Vector2(1, 0),   // 1
+                        new THREE.Vector2(1, 1),   // 2
+                        new THREE.Vector2(0.5, 1), // 3
+                        new THREE.Vector2(0, 1)];  // 4
+
+        // bottom face
+        floorGeom.faceVertexUvs[0].push([uvcoords[0], uvcoords[1], uvcoords[2]]);
+        floorGeom.faceVertexUvs[0].push([uvcoords[0], uvcoords[2], uvcoords[4]]);
+
+        var floor = new THREE.Mesh( floorGeom, grassMaterial);
+        scene.add(floor);
+
+        var wallGeom = new THREE.Geometry();
+
+        wallGeom.vertices =[
+            new THREE.Vector3(200, 0, 0),
+            new THREE.Vector3(200, 100, 0),
+            new THREE.Vector3(0, 100, 0),
+            new THREE.Vector3(0, 0, 0)
+        ];
+
+        wallGeom.faces = [
+            new THREE.Face3(3, 2, 1),
+            new THREE.Face3(3, 1, 0)
+        ];
+
+        wallGeom.computeFaceNormals();
+
+        wallGeom.faceVertexUvs[0] = [];
+
+        // set up a few uv coordinates
+        var uvcoords = [new THREE.Vector2(0, 0),   // 0
+                        new THREE.Vector2(1, 0),   // 1
+                        new THREE.Vector2(1, 1),   // 2
+                        new THREE.Vector2(0.5, 1), // 3
+                        new THREE.Vector2(0, 1)];  // 4
+
+        // bottom face
+        wallGeom.faceVertexUvs[0].push([uvcoords[0], uvcoords[1], uvcoords[2]]);
+        wallGeom.faceVertexUvs[0].push([uvcoords[0], uvcoords[2], uvcoords[4]]);
+
+        var wall = new THREE.Mesh( wallGeom, sunriseMaterial);
+        scene.add(wall);
+
+        var wallGeom2 = new THREE.Geometry();
+
+        wallGeom2.vertices =[
+            new THREE.Vector3(200, 0, 200),
+            new THREE.Vector3(200, 100, 200),
+            new THREE.Vector3(200, 100, 0),
+            new THREE.Vector3(200, 0, 0)
+        ];
+
+        wallGeom2.faces = [
+            new THREE.Face3(3, 2, 1),
+            new THREE.Face3(3, 1, 0)
+        ];
+
+        wallGeom2.computeFaceNormals();
+
+        wallGeom2.faceVertexUvs[0] = [];
+
+        // set up a few uv coordinates
+        var uvcoords = [new THREE.Vector2(0, 0),   // 0
+                        new THREE.Vector2(1, 0),   // 1
+                        new THREE.Vector2(1, 1),   // 2
+                        new THREE.Vector2(0.5, 1), // 3
+                        new THREE.Vector2(0, 1)];  // 4
+
+        // bottom face
+        wallGeom2.faceVertexUvs[0].push([uvcoords[0], uvcoords[1], uvcoords[2]]);
+        wallGeom2.faceVertexUvs[0].push([uvcoords[0], uvcoords[2], uvcoords[4]]);
+
+        var wall2 = new THREE.Mesh( wallGeom2, mountainMaterial);
+        scene.add(wall2);
+
+        animal = new THREE.Object3D();
+        animalLegFront1 = new THREE.Object3D();
+        animalLegBack1 = new THREE.Object3D();
+        animalLegFront2 = new THREE.Object3D();
+        animalLegBack2 = new THREE.Object3D();
+        scene.add(animal);
+        scene.add(animalLegFront1);
+        scene.add(animalLegBack1);
+        scene.add(animalLegFront2);
+        scene.add(animalLegBack2);
+
+        var material = new THREE.MeshPhongMaterial( { color: "brown", specular: "white", shininess: 5 } );
+
+        var loader = new THREE.JSONLoader();
+        loader.load('animal_body.json', function(geometry) {
+            animalBody = new THREE.Mesh(geometry, material);
+            animalBody.position.z = -5;
+            scene.add(animalBody);
+            animal.add(animalBody);
+        });
+
+        loader.load('animal_leg.json', function(geometry) {
+            var leg = new THREE.Mesh(geometry, material);
+            leg.position.z = -5;
+            leg.position.y = -2;
+            leg.position.x = -0.5;
+            scene.add(leg);
+            animalLegBack1.add(leg);
+            animal.add(animalLegBack1);
+        });
+
+        loader.load('animal_leg.json', function(geometry) {
+            var leg = new THREE.Mesh(geometry, material);
+            leg.position.z = -5;
+            leg.position.y = -2;
+            leg.position.x = 0.5;
+            scene.add(leg);
+            animalLegBack2.add(leg);
+            animal.add(animalLegBack2);
+        });
+
+        loader.load('animal_leg.json', function(geometry) {
+            var leg = new THREE.Mesh(geometry, material);
+            leg.position.z = -3;
+            leg.position.y = -2;
+            leg.position.x = -0.5;
+            scene.add(leg);
+            animalLegFront1.add(leg);
+            animal.add(animalLegFront1);
+        });
+
+        loader.load('animal_leg.json', function(geometry) {
+            var leg = new THREE.Mesh(geometry, material);
+            leg.position.z = -3;
+            leg.position.y = -2;
+            leg.position.x = 0.5;
+            scene.add(leg);
+            animalLegFront2.add(leg);
+            animal.add(animalLegFront2);
+        });
+
+        animal.position.x = 50;
+        animal.position.z = 50;
+        animal.position.y = 2.5;
+        animal.rotation.y = 2.8;
+
+        // monkey = new THREE.Object3D();
+        // scene.add(monkey);
+        // var monkeyMaterial = new THREE.MeshPhongMaterial( { color: "blue", specular: "blue", shininess: 3 } );
+        //
+        // loader.load('monkey_body.json', function(geometry) {
+        //     var monk = new THREE.Mesh(geometry, monkeyMaterial);
+        //     scene.add(monk);
+        //     monkey.add(monk);
+        // });
+        //
+        // monkey.position.z = 50;
+        // monkey.position.y = 1;
+        // monkey.position.x = 50;
+
+        var material2 = new THREE.MeshPhongMaterial( { color: "white", specular: "white", shininess: 5 } );
+
+        doughnut1 = new THREE.Object3D();
+        doughnut2 = new THREE.Object3D();
+        doughnut3 = new THREE.Object3D();
+        doughnut4 = new THREE.Object3D();
+        doughnut5 = new THREE.Object3D();
+        doughnut6 = new THREE.Object3D();
+        doughnut7 = new THREE.Object3D();
+        doughnut8 = new THREE.Object3D();
+        doughnut9 = new THREE.Object3D();
+        doughnut10 = new THREE.Object3D();
+        scene.add(doughnut1);
+        scene.add(doughnut2);
+        scene.add(doughnut3);
+        scene.add(doughnut4);
+        scene.add(doughnut5);
+        scene.add(doughnut6);
+        scene.add(doughnut7);
+        scene.add(doughnut8);
+        scene.add(doughnut9);
+        scene.add(doughnut10);
+        doughnuts[0] = doughnut1;
+        doughnuts[1] = doughnut2;
+        doughnuts[2] = doughnut3;
+        doughnuts[3] = doughnut4;
+        doughnuts[4] = doughnut5;
+        doughnuts[5] = doughnut6;
+        doughnuts[6] = doughnut7;
+        doughnuts[7] = doughnut8;
+        doughnuts[8] = doughnut9;
+        doughnuts[9] = doughnut10;
+        doughnutCount = doughnuts.length;
+
+        loader.load('doughnut.json', function(geometry) {
+             for(var x = 0; x < doughnuts.length; x++){
+                var doughnut = new THREE.Mesh(geometry, material2);
+                doughnut.scale.set(2,2,2);
+                scene.add(doughnut);
+                doughnuts[x].add(doughnut);
+             }
+        });
+
+        for(var i = 0; i < doughnuts.length; i++){
+          doughnuts[i].position.z = Math.random()*199;
+          doughnuts[i].position.y = 0.5;
+          doughnuts[i].position.x = Math.random()*199;
+        }
+    }
+
+    function update() {
+        keyboard.update();
+
+        if ( keyboard.pressed("left") ) {
+            // TODO move arm clockwise
+            if (animal.position.x-0.5 >= 3){
+                  if(animal.rotation.y != -2){
+                    //animal.rotation.y = -2;
+                  }
+                  animal.position.x += -0.5;
+                  camera.position.x += -0.5;
+            }
+        }
+        if ( keyboard.pressed("right") ) {
+            // TODO move arm counter-clockwise
+            if (animal.position.x+0.5 <= 198){
+                if(animal.rotation.y != 1.2){
+                  //animal.rotation.y = 1.2;
+                }
+                animal.position.x += 0.5;
+                camera.position.x += 0.5;
+            }
+        }
+        if ( keyboard.pressed("down") ) {
+            // TODO move lowerArm clockwise
+            if (animal.position.z+0.5 <= 195){
+                if(animal.rotation.y != -0.2){
+                  //animal.rotation.y = -0.2;
+                }
+                animal.position.z += 0.5;
+                camera.position.z += 0.5;
+            }
+        }
+        if ( keyboard.pressed("up") ) {
+            // TODO move lowerArm counter-clockwise
+            if (animal.position.z-0.5 >= 0){
+                if(animal.rotation.y != 2.8){
+                  //animal.rotation.y = 2.8;
+                }
+                animal.position.z += -0.5;
+                camera.position.z += -0.5;
+            }
+        }
+        if(animalLegBack1.rotation.x >= 0 && animalLegFront2.rotation.x >= 0){
+          setTimeout(function(){animalLegBack1.rotation.x = -0.1}, 300);
+          setTimeout(function(){animalLegFront2.rotation.x = -0.1}, 300);
+          setTimeout(function(){animalLegBack2.rotation.x = 0.1}, 300);
+          setTimeout(function(){animalLegFront1.rotation.x = 0.1}, 300);
+
+        }
+        else if(animalLegBack1.rotation.x <= 0 && animalLegFront2.rotation.x <= 0){
+          setTimeout(function(){animalLegBack1.rotation.x = 0.1}, 300);
+          setTimeout(function(){animalLegFront2.rotation.x = 0.1}, 300);
+          setTimeout(function(){animalLegBack2.rotation.x = -0.1}, 300);
+          setTimeout(function(){animalLegFront1.rotation.x = -0.1}, 300);
+        }
+      }
+
+    function isDoughnut(){
+        for(var i = 0; i < doughnuts.length; i++){
+            if(Math.abs(animal.position.x - doughnuts[i].position.x) <= 3 && Math.abs(animal.position.z - doughnuts[i].position.z) <= 3 ){
+                scene.remove(doughnuts[i]);
+                doughnuts.splice(i,1);
+            }
+        }
+    }
+
+    // function moveMonkey(){
+    //     var newX = Math.random()*3-2;
+    //     var newZ = Math.random()*3-2;
+    //
+    //     if(monkey.position.x+newX>0 && monkey.position.z+newZ>0 && monkey.position.x+newX<198 && monkey.position.z+newZ<195){
+    //       monkey.position.x+=newX;
+    //       monkey.position.z+=newZ;
+    //     }
+    // }
+
+    // Render the scene. This is called for each frame of the animation.
+    function render() {
+        requestAnimationFrame( render );
+
+        isDoughnut();
+        //setTimeout(function(){moveMonkey()}, 1000);
+        if(doughnuts.length !=0){
+          console.log("Doughnuts Left: " + doughnuts.length);
+        }
+        if(doughnuts.length == 0){
+          console.log("You ate all the doughnuts!!! ^_^");
+          cancelAnimationFrame(render);
+        }
+
+        renderer.render(scene, camera);
+        update();
+    }
+
+    //----------------------------------------------------------------------------------
+
+    // The init() function is called by the onload event when the document has loaded.
+    function init() {
+        try {
+            canvas = document.getElementById("glcanvas");
+            renderer = new THREE.WebGLRenderer( { canvas: canvas, antialias: true} );
+        }
+        catch (e) {
+            document.getElementById("canvas-holder").innerHTML = "<h3><b>WebGL is not available.</b><h3>";
+            return;
+        }
+
+        doughnuts = [];
+
+        // create world and render scene
+        createWorld();
+        render();
+    }
+
+</script>
+
+</head>
+<body onload="init()">
+<div id="canvas-holder">
+    <canvas id="glcanvas" width="600" height="400"></canvas>
+</div>
+<strong> Time to eat some doughnuts! Move the character around using the arrow keys and move over the doughnuts to eat them. Once you eat all the doughnuts, you win! There are 10 doughnuts in total. Have fun! </strong>
+</body>
+</html>
